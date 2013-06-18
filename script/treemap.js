@@ -1,8 +1,9 @@
 $(function(){
 
-    var extend = 5.75;
-    var w = 100,
-        h = 500,
+    var extend = 1;
+
+    var w = $(window).width(),
+        h = $(window).height(),
         x = d3.scale.linear().range([0, w]),
         y = d3.scale.linear().range([0, h]),
         color = d3.scale.category20c(),
@@ -25,6 +26,8 @@ $(function(){
         .attr("height", h)
         .append("svg:g")
         .attr("transform", "translate(.5,.5)");
+
+
 
     d3.json("/static/flare.json", function(data) {
         node = root = data;
