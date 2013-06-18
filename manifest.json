@@ -1,0 +1,19 @@
+{
+    "manifest_version": 2,
+
+    "name": "My Chrome Extension",
+    "description": "閲覧履歴を100件コーンソールに表示",
+    "version": "1.0",
+
+    "browser_action": {
+        "default_icon": "images/icon.png",
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "history",
+        "http://jlp.yahooapis.jp/*",
+        "https://jlp.yahooapis.jp/*",
+        "http://d3js.org/*"
+
+    ]
+}
