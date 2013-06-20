@@ -12,9 +12,8 @@
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "permissions": [
         "history",
-        "http://jlp.yahooapis.jp/*",
-        "https://jlp.yahooapis.jp/*",
-        "http://d3js.org/*"
+        "http://fonts.googleapis.com/*",
+        "http://itolabchica.appspot.com/*"
 
     ]
 }

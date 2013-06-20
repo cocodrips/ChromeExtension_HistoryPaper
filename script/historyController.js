@@ -8,36 +8,72 @@
 
 
 (function() {
-  var Hashmap;
+  var CreateData, ExtractPageData, Hashmap;
 
   $(function() {
-    var end, now, start, time,
+    var comparisonStart, end, hash, now, start, time,
       _this = this;
     now = new Date();
     time = now.getHours() + ":" + now.getMinutes();
-    start = Date.parse("Apr 1, 2013");
+    start = Date.parse(new Date()) - 8640000;
+    comparisonStart = Date.parse(new Date()) - 60480000;
     end = Date.parse(new Date());
-    return chrome.history.search({
+    hash = new Hashmap;
+    chrome.history.search({
+      "text": "",
+      "startTime": comparisonStart,
+      "endTime": start,
+      "maxResults": 7000
+    }, function(array) {
+      return hash.create_idfhash(array);
+    });
+    chrome.history.search({
       "text": "",
       "startTime": start,
       "endTime": end,
-      "maxResults": 100
+      "maxResults": 1000
     }, function(array) {
-      var hashmap;
-      hashmap = new Hashmap(array);
-      return console.log(hashmap.sorted_by_times());
+      return hash.create_tfhash(array);
     });
+    return setTimeout(function() {
+      var jsonData;
+      jsonData = new CreateData(hash.sortedByTimes());
+      return draw_treemap(jsonData);
+    }, 200);
   });
 
   Hashmap = (function() {
-    var create_hash;
+    function Hashmap() {}
 
-    function Hashmap(array) {
-      this.hash = create_hash(array);
-      this.hash_sorted_by_times = null;
-    }
+    Hashmap.hash = null;
 
-    create_hash = function(array) {
+    Hashmap.idfhash = null;
+
+    Hashmap.hashSortedByTimes = null;
+
+    Hashmap.prototype.create_tfhash = function(array) {
+      var e, hash, id, idf, p, _i, _len;
+      if (!this.idfhash) {
+        return null;
+      }
+      hash = [];
+      for (_i = 0, _len = array.length; _i < _len; _i++) {
+        e = array[_i];
+        id = e.id;
+        idf = this.idfhash[id] ? false : true;
+        if (!hash[id]) {
+          hash[id] = {
+            time: e.visitCount,
+            priority: p = idf ? 100 : e.visitCount,
+            url: e.url,
+            title: e.title
+          };
+        }
+      }
+      return this.hash = hash;
+    };
+
+    Hashmap.prototype.create_idfhash = function(array) {
       var e, hash, id, _i, _len;
       hash = [];
       for (_i = 0, _len = array.length; _i < _len; _i++) {
@@ -51,24 +87,114 @@
           };
         }
       }
-      return this.hash = hash;
+      return this.idfhash = hash;
     };
 
-    Hashmap.prototype.sorted_by_times = function() {
+    Hashmap.prototype.sortedByTimes = function() {
       var sorted,
         _this = this;
-      if (this.hash_sorted_by_times) {
-        return this.hash_sorted_by_times;
+      if (this.hashSortedByTimes) {
+        return this.hashSortedByTimes;
       } else {
         sorted = _.sortBy(this.hash, function(e) {
-          return e.time;
+          return e.priority;
         });
-        this.hash_sorted_by_times = sorted.reverse();
+        this.hashSortedByTimes = sorted;
       }
-      return this.hash_sorted_by_times;
+      return this.hashSortedByTimes;
     };
 
     return Hashmap;
+
+  })();
+
+  CreateData = (function() {
+    var calcDataSize, createJson, openURI, pageCheck;
+
+    function CreateData(hash) {
+      this.jsonFile = createJson(hash);
+      return this.jsonFile;
+    }
+
+    createJson = function(hash) {
+      var count, json,
+        _this = this;
+      count = 0;
+      json = {
+        name: "json",
+        children: []
+      };
+      hash.forEach(function(h) {
+        var elementNum, ex, group;
+        elementNum = 10;
+        if (count < elementNum) {
+          if (pageCheck(h)) {
+            group = {
+              name: h.title,
+              children: [
+                {
+                  name: h.title,
+                  size: calcDataSize(h.priority),
+                  url: h.url
+                }
+              ]
+            };
+            ex = new ExtractPageData(h.url);
+            json.children.push(group);
+            return count++;
+          }
+        }
+      });
+      return json;
+    };
+
+    calcDataSize = function(val) {
+      var size;
+      size = val < 100 ? 10 : 50;
+      return size;
+    };
+
+    pageCheck = function(h) {
+      if (h.url.indexOf("https") > -1) {
+        return false;
+      }
+      return true;
+    };
+
+    openURI = function(url) {
+      var encoded,
+        _this = this;
+      encoded = encodeURIComponent(url);
+      return $.ajax({
+        type: 'GET',
+        url: "http://itolabchica.appspot.com/hs/pageinfo/" + encoded,
+        dataType: 'document',
+        success: function(json) {
+          return console.log(json);
+        }
+      });
+    };
+
+    return CreateData;
+
+  })();
+
+  ExtractPageData = (function() {
+    var createDom, openURI;
+
+    function ExtractPageData(url) {
+      this.requestUrl = url;
+      openURI(this.requestUrl);
+    }
+
+    openURI = function(url) {
+      var encoded;
+      return encoded = encodeURIComponent(url);
+    };
+
+    createDom = function(html) {};
+
+    return ExtractPageData;
 
   })();
 
