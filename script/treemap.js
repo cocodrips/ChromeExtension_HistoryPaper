@@ -56,16 +56,36 @@ var draw_treemap = function(dataset){
         .text(function(d) { return d.name; })
         .style("opacity", function(d) { d.w = this.getComputedTextLength(); return d.dx > d.w ? 1 : 0; });
 
-    var id_name = function(d) { return d.parent.name;};
+//    var id_name = function(d) { return d.parent.name;};
+    var id_name = function(d) { return d.articleId;};
+    var width = function(d) {
+        console.log(d.dx);
+        return d.dx * extend - 1 +"px";
+    };
+    var height = function(d) { return (d.dy - 1)+"px";};
+
+
     var allRect = cell.selectAll("rect")
         .append("div")
-        .text("Hello")
+        .text(function(d) { return d.name; })
         .attr("id", id_name)
         .attr("class", "branches")
         .style("width", function(d) { return d.dx * extend - 1; })
         .style("height", function(d) { return d.dy - 1; })
         .style("background-color", "black");
 
+
+//    同じ座標にdivを追加
+    d3.select("#main-container")
+        .selectAll("div")
+        .data(nodes)
+        .enter()
+        .append("div")
+        .attr("class","article")
+        .style("width", width)
+        .style("height", height)
+        .style("left", function(d) { return d.x*extend+"px"})
+        .style("top", function(d) { return d.y+"px"});
 
     d3.select(window).on("click", function() { zoom(root); });
 

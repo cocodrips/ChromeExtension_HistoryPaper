@@ -15,54 +15,30 @@
 $ ->
 # Main
   now = new Date()
-  time = now.getHours()+":"+now.getMinutes()
   start = Date.parse(new Date()) - 8640000;
-  comparisonStart = Date.parse(new Date()) - 60480000;
   end = Date.parse(new Date());
-  hash = new Hashmap
+  jsonData = ""
 
-  #  tf-idf的なものを調べるため
-  chrome.history.search("text":"","startTime":comparisonStart,"endTime":start,"maxResults":7000,
-    (array)=>
-      hash.create_idfhash(array)
-  )
 
   #  求めたいもの
-  chrome.history.search("text":"","startTime":start,"endTime":end,"maxResults":1000,
+  chrome.history.search("text":"","startTime":start,"endTime":end,"maxResults":100,
     (array)=>
-      hash.create_tfhash(array)
+      hashmap = new Hashmap(array)
+      jsonData = new CreateData(hashmap.sortedByTimes())
   )
 
   setTimeout(()->
-    jsonData = new CreateData(hash.sortedByTimes())
+    console.log jsonData
     draw_treemap(jsonData)
   ,200)
 
 class Hashmap
-#  constructor: (array)->
-  @hash = null
-  @idfhash = null
-  @hashSortedByTimes = null
+  constructor:(hash)->
+    @hash = create_hash(hash)
+    @hashSortedByTimes = null
 
   #  閲覧履歴のhashデータを生成
-  create_tfhash: (array) ->
-    if !@idfhash then return null
-    hash = []
-    for e in array
-      id = e.id
-#      idf =  if @idfhash[id] then @idfhash[id] else 1
-      idf = if @idfhash[id] then false else true
-      if !hash[id]
-        hash[id] = {
-          time:e.visitCount
-#          priority: p = if e.visitCount / idf then e.visitCount / idf else 1
-          priority: p = if idf then 100 else e.visitCount
-          url:e.url
-          title:e.title
-        }
-    @hash = hash
-
-  create_idfhash: (array) ->
+  create_hash = (array) ->
     hash = []
     for e in array
       id = e.id
@@ -72,15 +48,14 @@ class Hashmap
           url:e.url
           title:e.title
         }
-    @idfhash = hash
+    return hash
 
-  #  hashmapを訪問回数順に並べる
   sortedByTimes:()->
     if @hashSortedByTimes
       return @hashSortedByTimes
     else
       sorted =  _.sortBy(@hash, (e)=>
-        return e.priority
+        return e.time
       )
       @hashSortedByTimes = sorted
     return @hashSortedByTimes
@@ -106,9 +81,9 @@ class CreateData
             children:[
               {
                 name: h.title
-                size: calcDataSize h.priority
+                size: calcDataSize h.time
                 url: h.url
-#                json: openURI(h.url)
+                articleId: "article"+count
               }
             ]
           }

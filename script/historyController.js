@@ -11,69 +11,37 @@
   var CreateData, ExtractPageData, Hashmap;
 
   $(function() {
-    var comparisonStart, end, hash, now, start, time,
+    var end, jsonData, now, start,
       _this = this;
     now = new Date();
-    time = now.getHours() + ":" + now.getMinutes();
     start = Date.parse(new Date()) - 8640000;
-    comparisonStart = Date.parse(new Date()) - 60480000;
     end = Date.parse(new Date());
-    hash = new Hashmap;
-    chrome.history.search({
-      "text": "",
-      "startTime": comparisonStart,
-      "endTime": start,
-      "maxResults": 7000
-    }, function(array) {
-      return hash.create_idfhash(array);
-    });
+    jsonData = "";
     chrome.history.search({
       "text": "",
       "startTime": start,
       "endTime": end,
-      "maxResults": 1000
+      "maxResults": 100
     }, function(array) {
-      return hash.create_tfhash(array);
+      var hashmap;
+      hashmap = new Hashmap(array);
+      return jsonData = new CreateData(hashmap.sortedByTimes());
     });
     return setTimeout(function() {
-      var jsonData;
-      jsonData = new CreateData(hash.sortedByTimes());
+      console.log(jsonData);
       return draw_treemap(jsonData);
     }, 200);
   });
 
   Hashmap = (function() {
-    function Hashmap() {}
+    var create_hash;
 
-    Hashmap.hash = null;
+    function Hashmap(hash) {
+      this.hash = create_hash(hash);
+      this.hashSortedByTimes = null;
+    }
 
-    Hashmap.idfhash = null;
-
-    Hashmap.hashSortedByTimes = null;
-
-    Hashmap.prototype.create_tfhash = function(array) {
-      var e, hash, id, idf, p, _i, _len;
-      if (!this.idfhash) {
-        return null;
-      }
-      hash = [];
-      for (_i = 0, _len = array.length; _i < _len; _i++) {
-        e = array[_i];
-        id = e.id;
-        idf = this.idfhash[id] ? false : true;
-        if (!hash[id]) {
-          hash[id] = {
-            time: e.visitCount,
-            priority: p = idf ? 100 : e.visitCount,
-            url: e.url,
-            title: e.title
-          };
-        }
-      }
-      return this.hash = hash;
-    };
-
-    Hashmap.prototype.create_idfhash = function(array) {
+    create_hash = function(array) {
       var e, hash, id, _i, _len;
       hash = [];
       for (_i = 0, _len = array.length; _i < _len; _i++) {
@@ -87,7 +55,7 @@
           };
         }
       }
-      return this.idfhash = hash;
+      return hash;
     };
 
     Hashmap.prototype.sortedByTimes = function() {
@@ -97,7 +65,7 @@
         return this.hashSortedByTimes;
       } else {
         sorted = _.sortBy(this.hash, function(e) {
-          return e.priority;
+          return e.time;
         });
         this.hashSortedByTimes = sorted;
       }
@@ -134,8 +102,9 @@
               children: [
                 {
                   name: h.title,
-                  size: calcDataSize(h.priority),
-                  url: h.url
+                  size: calcDataSize(h.time),
+                  url: h.url,
+                  articleId: "article" + count
                 }
               ]
             };
