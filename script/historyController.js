@@ -8,7 +8,7 @@
 
 
 (function() {
-  var CreateData, ExtractPageData, Hashmap;
+  var CreateData, ExtractPageData, Hashmap, searchWord;
 
   $(function() {
     var end, jsonData, now, start,
@@ -21,10 +21,11 @@
       "text": "",
       "startTime": start,
       "endTime": end,
-      "maxResults": 100
+      "maxResults": 1000
     }, function(array) {
       var hashmap;
       hashmap = new Hashmap(array);
+      searchWord(hashmap.hash);
       return jsonData = new CreateData(hashmap.sortedByTimes());
     });
     return setTimeout(function() {
@@ -77,7 +78,7 @@
   })();
 
   CreateData = (function() {
-    var calcDataSize, createJson, openURI, pageCheck;
+    var calcDataSize, calcElementNum, createJson, openURI, pageCheck;
 
     function CreateData(hash) {
       this.jsonFile = createJson(hash);
@@ -94,7 +95,8 @@
       };
       hash.forEach(function(h) {
         var elementNum, ex, group;
-        elementNum = 10;
+        elementNum = calcElementNum();
+        console.log(elementNum);
         if (count < elementNum) {
           if (pageCheck(h)) {
             group = {
@@ -117,6 +119,20 @@
       return json;
     };
 
+    calcElementNum = function() {
+      var height, s, width;
+      width = $(window).width();
+      height = $(window).height();
+      s = width * height;
+      if (s < 700000) {
+        return 4;
+      } else if (s < 1500000) {
+        return 6;
+      } else {
+        return 8;
+      }
+    };
+
     calcDataSize = function(val) {
       var size;
       size = val < 100 ? 10 : 50;
@@ -124,7 +140,31 @@
     };
 
     pageCheck = function(h) {
+      var domainType, pageType, t, target, _i, _len;
+      if (!this.domainHash) {
+        this.domainHash = [];
+      }
       if (h.url.indexOf("https") > -1) {
+        return false;
+      }
+      if (h.title.length < 2) {
+        return false;
+      }
+      pageType = h.url.split("/").pop();
+      target = ["png", "jpg", "mp3"];
+      for (_i = 0, _len = target.length; _i < _len; _i++) {
+        t = target[_i];
+        if (pageType.indexOf(t) !== -1) {
+          return false;
+        }
+      }
+      domainType = h.url.split("/")[2];
+      if (!this.domainHash[domainType]) {
+        this.domainHash[domainType] = true;
+      } else {
+        return false;
+      }
+      if (domainType === "www.youtube.com") {
         return false;
       }
       return true;
@@ -166,5 +206,29 @@
     return ExtractPageData;
 
   })();
+
+  searchWord = function(hashmap) {
+    var titles,
+      _this = this;
+    titles = [];
+    hashmap.forEach(function(page) {
+      var q;
+      if (page.url.indexOf("https://www.google.co.jp/search?") !== -1) {
+        q = page.url.match(/\?q=.*?\&/);
+        if (q) {
+          q = decodeURI(q[0].replace(/\?q=(.*?)\&/, '$1'));
+          q = q.split(/[\s,\+]+/);
+          return q.forEach(function(title) {
+            if (!titles[title]) {
+              return titles[title] = 1;
+            } else {
+              return titles[title] += 1;
+            }
+          });
+        }
+      }
+    });
+    return draw_cloud(titles);
+  };
 
 }).call(this);

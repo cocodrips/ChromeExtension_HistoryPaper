@@ -3,8 +3,8 @@ var draw_treemap = function(dataset){
     var bgcolor = "#F5F5F5";
     var bordercolor = "#fff";
 
-    var w = $(window).width(),
-        h = $(window).height() - 38,
+    var w = $(window).width()- sidebarWidth,
+        h = $(window).height() - headerHeight,
         x = d3.scale.linear().range([0, w]),
         y = d3.scale.linear().range([0, h]),
         color = d3.scale.category20c(),
@@ -59,7 +59,6 @@ var draw_treemap = function(dataset){
 //    var id_name = function(d) { return d.parent.name;};
     var id_name = function(d) { return d.articleId;};
     var width = function(d) {
-        console.log(d.dx);
         return d.dx * extend - 1 +"px";
     };
     var height = function(d) { return (d.dy - 1)+"px";};
@@ -76,7 +75,7 @@ var draw_treemap = function(dataset){
 
 
 //    同じ座標にdivを追加
-    d3.select("#main-container")
+    var article = d3.select("#main-container")
         .selectAll("div")
         .data(nodes)
         .enter()
@@ -85,7 +84,14 @@ var draw_treemap = function(dataset){
         .style("width", width)
         .style("height", height)
         .style("left", function(d) { return d.x*extend+"px"})
-        .style("top", function(d) { return d.y+"px"});
+        .style("top", function(d) { return d.y+"px"})
+        .append("div")
+        .attr("class","article-inner")
+
+    article.append("h2")
+        .html(function(d) { return "<a href="+d.url+" target='_blank'>"+d.name+"</a>"});
+    article.append("h5")
+        .html(function(d) { return "<a href="+d.url+" target='_blank'>"+d.url+"</a>"});
 
     d3.select(window).on("click", function() { zoom(root); });
 

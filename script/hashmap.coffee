@@ -26,22 +26,6 @@ class Hashmap
     return sorted_hash
 
   #  検索したワードの抽出
-#  search_word = (hashmap)->
-#    titles = ""
-#    hashmap.forEach(
-#      (page)=>
-#        if page.url.indexOf("https://www.google.co.jp/search?") != -1
-#          q = page.url.match /\?q=.*?\&/
-#          if q
-#            q = decodeURI q[0].replace /\?q=(.*?)\&/,'$1'
-#            q = q.split /[\s,\+]+/
-#            q.forEach(
-#              (title)=>
-#                titles += title + " "
-#            )
-#            titles += "<br>"
-#    )
-#    $('body').html(titles)
 
 
 
