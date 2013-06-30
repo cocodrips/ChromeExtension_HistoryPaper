@@ -92,6 +92,8 @@ var draw_treemap = function(dataset){
         .html(function(d) { return "<a href="+d.url+" target='_blank'>"+d.name+"</a>"});
     article.append("h5")
         .html(function(d) { return "<a href="+d.url+" target='_blank'>"+d.url+"</a>"});
+    article.append("div")
+        .html(function(d) {return "<img src= " +d.image + ">"})
 
     d3.select(window).on("click", function() { zoom(root); });
 

@@ -102,7 +102,7 @@
       };
       hash.forEach(function(h) {
         var elementNum, url;
-        elementNum = 4;
+        elementNum = 6;
         if (count < elementNum) {
           if (pageCheck(h)) {
             url = h.url + ",";
