@@ -1,19 +1,20 @@
 {
     "manifest_version": 2,
 
-    "name": "My Chrome Extension",
-    "description": "閲覧履歴を100件コーンソールに表示",
+    "name": "HistoryPaper / Chica",
+    "description": "historypaper",
     "version": "1.0",
 
     "browser_action": {
         "default_icon": "images/icon.png",
         "default_popup": "popup.html"
     },
-    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "permissions": [
         "history",
         "http://fonts.googleapis.com/*",
-        "http://itolabchica.appspot.com/*"
+        "http://itolabchica.appspot.com/*",
+        "http://api.flickr.com/",
+        "http://www25463ue.sakura.ne.jp/*"
 
     ]
 }

@@ -14,10 +14,10 @@
     var end, jsonData, now, start,
       _this = this;
     now = new Date();
-    start = Date.parse(new Date()) - 8640000;
+    start = Date.parse(new Date()) - 86400000;
     end = Date.parse(new Date());
     jsonData = "";
-    chrome.history.search({
+    return chrome.history.search({
       "text": "",
       "startTime": start,
       "endTime": end,
@@ -26,12 +26,9 @@
       var hashmap;
       hashmap = new Hashmap(array);
       searchWord(hashmap.hash);
-      return jsonData = new CreateData(hashmap.sortedByTimes());
+      jsonData = new CreateData(hashmap.sortedByTimes());
+      return getJsonData.request(jsonData.jsonFile);
     });
-    return setTimeout(function() {
-      console.log(jsonData);
-      return draw_treemap(jsonData);
-    }, 200);
   });
 
   Hashmap = (function() {
@@ -39,7 +36,7 @@
 
     function Hashmap(hash) {
       this.hash = create_hash(hash);
-      this.hashSortedByTimes = null;
+      this.hashSortedByTimes = "";
     }
 
     create_hash = function(array) {
@@ -62,15 +59,24 @@
     Hashmap.prototype.sortedByTimes = function() {
       var sorted,
         _this = this;
-      if (this.hashSortedByTimes) {
-        return this.hashSortedByTimes;
-      } else {
-        sorted = _.sortBy(this.hash, function(e) {
-          return e.time;
-        });
-        this.hashSortedByTimes = sorted;
-      }
+      sorted = _.sortBy(this.hash, function(e) {
+        return e.time;
+      });
+      this.hashSortedByTimes = sorted;
       return this.hashSortedByTimes;
+    };
+
+    Hashmap.prototype.getData = function() {
+      var _this = this;
+      return $.ajax({
+        type: 'POST',
+        url: "http://itolabchica.appspot.com/hs/json",
+        data: this.hashSortedByTimes,
+        dataType: 'json',
+        success: function(html) {
+          return console.log(html);
+        }
+      });
     };
 
     return Hashmap;
@@ -78,7 +84,7 @@
   })();
 
   CreateData = (function() {
-    var calcDataSize, calcElementNum, createJson, openURI, pageCheck;
+    var calcDataSize, calcElementNum, createJson, pageCheck, requestApi, showTest;
 
     function CreateData(hash) {
       this.jsonFile = createJson(hash);
@@ -86,37 +92,40 @@
     }
 
     createJson = function(hash) {
-      var count, json,
+      var count, json, urls,
         _this = this;
       count = 0;
+      urls = "";
       json = {
         name: "json",
         children: []
       };
       hash.forEach(function(h) {
-        var elementNum, ex, group;
-        elementNum = calcElementNum();
-        console.log(elementNum);
+        var elementNum, url;
+        elementNum = 4;
         if (count < elementNum) {
           if (pageCheck(h)) {
-            group = {
-              name: h.title,
-              children: [
-                {
-                  name: h.title,
-                  size: calcDataSize(h.time),
-                  url: h.url,
-                  articleId: "article" + count
-                }
-              ]
-            };
-            ex = new ExtractPageData(h.url);
-            json.children.push(group);
+            url = h.url + ",";
+            console.log(url);
+            urls += url;
             return count++;
           }
         }
       });
-      return json;
+      return urls;
+    };
+
+    requestApi = function(encoded) {
+      var req;
+      req = new XMLHttpRequest();
+      req.open("GET", "http://itolabchica.appspot.com/hs/pageinfo/" + encoded, true);
+      req.onload = showTest(this);
+      return req.send(null);
+    };
+
+    showTest = function(e) {
+      console.log("status" + e.target.status);
+      return console.log("response:" + e.target.responseText);
     };
 
     calcElementNum = function() {
@@ -167,21 +176,10 @@
       if (domainType === "www.youtube.com") {
         return false;
       }
+      if (domainType === "127.0.0.1:5000") {
+        return false;
+      }
       return true;
-    };
-
-    openURI = function(url) {
-      var encoded,
-        _this = this;
-      encoded = encodeURIComponent(url);
-      return $.ajax({
-        type: 'GET',
-        url: "http://itolabchica.appspot.com/hs/pageinfo/" + encoded,
-        dataType: 'document',
-        success: function(json) {
-          return console.log(json);
-        }
-      });
     };
 
     return CreateData;
@@ -208,7 +206,7 @@
   })();
 
   searchWord = function(hashmap) {
-    var titles,
+    var key, tag, titles, _i, _len, _results,
       _this = this;
     titles = [];
     hashmap.forEach(function(page) {
@@ -228,7 +226,15 @@
         }
       }
     });
-    return draw_cloud(titles);
+    console.log(titles);
+    tag = "";
+    console.log("key");
+    _results = [];
+    for (_i = 0, _len = titles.length; _i < _len; _i++) {
+      key = titles[_i];
+      _results.push(console.log);
+    }
+    return _results;
   };
 
 }).call(this);

@@ -15,7 +15,7 @@
 $ ->
 # Main
   now = new Date()
-  start = Date.parse(new Date()) - 8640000;
+  start = Date.parse(new Date()) - 86400000;
   end = Date.parse(new Date());
   jsonData = ""
 
@@ -26,17 +26,24 @@ $ ->
       hashmap = new Hashmap(array)
       searchWord(hashmap.hash)
       jsonData = new CreateData(hashmap.sortedByTimes())
+      getJsonData.request(jsonData.jsonFile);
+
+#      hashmap.getData()
   )
 
-  setTimeout(()->
-    console.log jsonData
-    draw_treemap(jsonData)
-  ,200)
+#  setTimeout(()->
+#    draw_treemap(jsonData)
+#  ,200)
+#
+#  $(window).resize(()->
+#    console.log "a"
+#    draw_treemap(jsonData)
+#  )
 
 class Hashmap
   constructor:(hash)->
     @hash = create_hash(hash)
-    @hashSortedByTimes = null
+    @hashSortedByTimes = ""
 
   #  閲覧履歴のhashデータを生成
   create_hash = (array) ->
@@ -51,15 +58,22 @@ class Hashmap
         }
     return hash
 
-  sortedByTimes:()->
-    if @hashSortedByTimes
-      return @hashSortedByTimes
-    else
-      sorted =  _.sortBy(@hash, (e)=>
-        return e.time
-      )
-      @hashSortedByTimes = sorted
+  sortedByTimes: ()->
+    sorted =  _.sortBy(@hash, (e)=>
+      return e.time
+    )
+    @hashSortedByTimes = sorted
     return @hashSortedByTimes
+
+  getData:()->
+    $.ajax({
+      type: 'POST'
+      url: "http://itolabchica.appspot.com/hs/json"
+      data: @hashSortedByTimes
+      dataType:'json'
+      success: (html)=>
+        console.log html
+    })
 
 class CreateData
   constructor: (hash)->
@@ -68,31 +82,37 @@ class CreateData
 
   createJson = (hash)->
     count = 0
+    urls = ""
     json = {
       name: "json"
       children: []
     }
-
     hash.forEach (h) =>
-      elementNum = calcElementNum()
-      console.log elementNum
+      elementNum = 4
       if count < elementNum
         if pageCheck(h)
-          group = {
-            name:h.title
-            children:[
-              {
-                name: h.title
-                size: calcDataSize h.time
-                url: h.url
-                articleId: "article"+count
-              }
-            ]
-          }
-          ex = new ExtractPageData(h.url)
-          json.children.push group
+          url = h.url + ","
+          console.log url
+          urls += url
+
           count++
-    return json
+
+    return urls
+
+
+
+
+  requestApi = (encoded) ->
+    req = new XMLHttpRequest();
+    req.open("GET", "http://itolabchica.appspot.com/hs/pageinfo/"+encoded, true)
+    req.onload = showTest(this);
+    req.send(null);
+
+  showTest = (e)->
+    console.log "status" + e.target.status
+    console.log "response:" + e.target.responseText
+
+
 
   calcElementNum = ()->
     width = $(window).width()
@@ -135,19 +155,20 @@ class CreateData
 
     if domainType == "www.youtube.com"
       return false
+    if domainType == "127.0.0.1:5000"
+      return false
 
     return true
 
-
-  openURI = (url)->
-    encoded = encodeURIComponent(url)
-    $.ajax({
-      type: 'GET'
-      url: "http://itolabchica.appspot.com/hs/pageinfo/" + encoded
-      dataType:'document'
-      success: (json)=>
-        console.log json
-    })
+#  openURI = (url)->
+#    encoded = encodeURIComponent(url)
+#    $.ajax({
+#      type: 'GET'
+#      url: "http://itolabchica.appspot.com/hs/pageinfo/" + encoded
+#      dataType:'document'
+#      success: (json)=>
+#        console.log json
+#    })
 
 
 
@@ -160,9 +181,10 @@ class ExtractPageData
   openURI = (url)->
     encoded = encodeURIComponent(url)
 #    $.ajax({
-#      type: 'GET'
+#      type: 'POST'
 #      url: "http://itolabchica.appspot.com/hs/pageinfo" + encoded
-#      dataType:'document'
+#      data:
+#      dataType:'json'
 #      success: (html)=>
 #        console.log html
 ##        createDom(html)
@@ -190,7 +212,14 @@ searchWord = (hashmap)->
                 titles[title] += 1
           )
   )
-  draw_cloud(titles)
+  console.log titles
+
+  tag = ""
+  console.log "key"
+  for key in titles
+    console.log
+
+
 
 
 
