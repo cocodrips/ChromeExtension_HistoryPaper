@@ -6,6 +6,7 @@ $dark-gray: #666666;
 body{
   background-color: white;
   font-family: 'Open Sans', 'Century Gothic',Arial, Helvetica, sans-serif;
+  letter-spacing: 1px;
 
   #container{
     width: 100%;
@@ -19,9 +20,10 @@ body{
 
   #key-cloud{
     width: 100%;
+    max-width: 300px;
     span{
       letter-spacing: 1px;
-      margin-right: 10px;
+      margin-right: 3px;
     }
   }
 

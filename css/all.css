@@ -1,6 +1,7 @@
 body {
   background-color: white;
-  font-family: 'Open Sans', 'Century Gothic',Arial, Helvetica, sans-serif; }
+  font-family: 'Open Sans', 'Century Gothic',Arial, Helvetica, sans-serif;
+  letter-spacing: 1px; }
   body #container {
     width: 100%;
     height: 100%; }
@@ -8,10 +9,11 @@ body {
     position: absolute;
     width: 100%; }
   body #key-cloud {
-    width: 100%; }
+    width: 100%;
+    max-width: 300px; }
     body #key-cloud span {
       letter-spacing: 1px;
-      margin-right: 10px; }
+      margin-right: 3px; }
   body .article {
     background-color: whitesmoke;
     position: absolute;

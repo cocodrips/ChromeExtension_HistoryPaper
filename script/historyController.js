@@ -167,6 +167,9 @@
       if (domainType === "www.youtube.com") {
         return false;
       }
+      if (domainType === "127.0.0.1:5000") {
+        return false;
+      }
       return true;
     };
 
@@ -208,9 +211,10 @@
   })();
 
   searchWord = function(hashmap) {
-    var titles,
+    var text, titles,
       _this = this;
     titles = [];
+    text = "";
     hashmap.forEach(function(page) {
       var q;
       if (page.url.indexOf("https://www.google.co.jp/search?") !== -1) {
@@ -219,16 +223,15 @@
           q = decodeURI(q[0].replace(/\?q=(.*?)\&/, '$1'));
           q = q.split(/[\s,\+]+/);
           return q.forEach(function(title) {
-            if (!titles[title]) {
-              return titles[title] = 1;
-            } else {
-              return titles[title] += 1;
+            if (text.indexOf(title) === -1) {
+              return text += "<span>" + title + "</span>";
             }
           });
         }
       }
     });
-    return draw_cloud(titles);
+    console.log(text);
+    return $('#key-cloud').append(text);
   };
 
 }).call(this);

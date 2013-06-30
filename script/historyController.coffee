@@ -135,6 +135,8 @@ class CreateData
 
     if domainType == "www.youtube.com"
       return false
+    if domainType == "127.0.0.1:5000"
+      return false
 
     return true
 
@@ -175,6 +177,7 @@ class ExtractPageData
 #クラス必要ないやつ
 searchWord = (hashmap)->
   titles = []
+  text = ""
   hashmap.forEach(
     (page)=>
       if page.url.indexOf("https://www.google.co.jp/search?") != -1
@@ -182,15 +185,21 @@ searchWord = (hashmap)->
         if q
           q = decodeURI q[0].replace /\?q=(.*?)\&/,'$1'
           q = q.split /[\s,\+]+/
+#          q.forEach(
+#            (title)=>
+#              if !titles[title]
+#                titles[title] = 1
+#              else
+#                titles[title] += 1
+#          )
           q.forEach(
             (title)=>
-              if !titles[title]
-                titles[title] = 1
-              else
-                titles[title] += 1
+              if text.indexOf(title) == -1
+                text += "<span>"+ title + "</span>"
           )
   )
-  draw_cloud(titles)
+  console.log text
+  $('#key-cloud').append(text)
 
 
 
