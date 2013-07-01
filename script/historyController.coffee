@@ -99,11 +99,11 @@ class CreateData
     height = $(window).height()
     s = width * height
     if s < 700000
-      return 4
-    else if s < 1500000
       return 6
-    else
+    else if s < 1500000
       return 8
+    else
+      return 10
 
 
   calcDataSize = (val)->
