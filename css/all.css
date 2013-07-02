@@ -12,6 +12,9 @@ body {
     body #key-cloud span {
       letter-spacing: 1px;
       margin-right: 10px; }
+    body #key-cloud pre {
+      display: inline-block;
+      margin: 1px; }
   body .article {
     background-color: whitesmoke;
     position: absolute;
