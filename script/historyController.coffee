@@ -54,9 +54,9 @@ class CreateData
     }
     hash.forEach (h) =>
       elementNum = calcElementNum()
-      if count < elementNum
+      if count < 6
         if canSelectPage(h)
-          url = h.url + ","
+          url = h.url.replace("http://","") + ","
           urls += url
           count++
 
@@ -76,6 +76,9 @@ class CreateData
   canSelectPage = (h)->
     if !@domainHash then @domainHash = []
     if h.url.indexOf("https") > -1
+      return false
+
+    if h.url.indexOf("http://") == -1
       return false
 
     if h.title.length < 2
