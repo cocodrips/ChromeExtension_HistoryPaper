@@ -54,7 +54,7 @@ class CreateData
     }
     hash.forEach (h) =>
       elementNum = calcElementNum()
-      if count < 6
+      if count < elementNum
         if canSelectPage(h)
           url = h.url.replace("http://","") + ","
           urls += url
@@ -67,11 +67,11 @@ class CreateData
     height = $(window).height()
     s = width * height
     if s < 700000
-      return 6
+      return 10
     else if s < 1500000
-      return 8
-    else
       return 12
+    else
+      return 16
 
   canSelectPage = (h)->
     if !@domainHash then @domainHash = []

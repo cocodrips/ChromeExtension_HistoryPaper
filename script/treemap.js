@@ -90,10 +90,15 @@ var draw_treemap = function(dataset){
 
     article.append("h2")
         .html(function(d) { return "<a href="+d.url+" target='_blank'>"+d.name+"</a>"});
-    article.append("h5")
-        .html(function(d) { return "<a href="+d.url+" target='_blank'>"+d.url+"</a>"});
+//    article.append("h5")
+//        .html(function(d) { return "<a href="+d.url+" target='_blank'>"+d.url+"</a>"});
     article.append("div")
-        .html(function(d) {return "<img src= " +d.image + ">"})
+        .attr("class","news-img")
+        .html(function(d) {return "<img src= " +d.image + ">"});
+    article.append("div")
+        .attr("class","news-text")
+        .html(function(d) {return d.summary});
+
 
     d3.select(window).on("click", function() { zoom(root); });
 
