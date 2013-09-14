@@ -1,22 +1,8 @@
-### /Users/Chiichan/.gitignore-boilerplates/Global/SASS.gitignore
-
-### SASS Ignores - "Sassy CSS" http://sass-lang.com/
 *.sass-cache
-
-
-### /Users/Chiichan/.gitignore-boilerplates/Global/IntelliJ.gitignore
-
 *.iml
 *.ipr
 *.iws
 .idea/
-
-
-### /Users/Chiichan/.gitignore-boilerplates/Node.gitignore
-
-lib-cov
-*.seed
-*.log
 *.csv
 *.dat
 *.out
