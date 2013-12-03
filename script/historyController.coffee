@@ -5,7 +5,7 @@ $ ->
   end = Date.parse(new Date());
   jsonData = ""
 
-  chrome.history.search("text":"","startTime":start,"endTime":end,"maxResults":1000,
+  chrome.history.search("text":"", "startTime":start, "endTime":end, "maxResults":1000,
     (array)=>
       hashmap = new Hashmap(array)
       searchWordList(hashmap.hash)
@@ -54,6 +54,7 @@ class CreateData
     }
     hash.forEach (h) =>
       elementNum = calcElementNum()
+      console.log elementNum
       if count < elementNum
         if canSelectPage(h)
           url = h.url.replace("http://","") + ","
@@ -67,11 +68,11 @@ class CreateData
     height = $(window).height()
     s = width * height
     if s < 700000
-      return 10
+      return 8
     else if s < 1500000
-      return 12
+      return 10
     else
-      return 16
+      return 12
 
   canSelectPage = (h)->
     if !@domainHash then @domainHash = []

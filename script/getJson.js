@@ -4,7 +4,7 @@ var getJsonData = {
     var req = new XMLHttpRequest();
     console.log(urls);
 //    url = "http://www25463ue.sakura.ne.jp/chica/web.wsgi/hs/pageinfo/"+ encodeURI(urls);
-    url = "http://www25463ue.sakura.ne.jp/chica/web.wsgi/hs/pageinfo/"+  escape(urls);
+    url = "http://cocodrips.com/hs/pageinfo/"+  escape(urls);
     console.log(url);
     req.open("GET", url, true);
     req.onload = this.showData_.bind(this);
