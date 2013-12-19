@@ -1,17 +1,30 @@
 $ ->
 # Main
   now = new Date()
-  start = Date.parse(new Date()) - 86400000;
-  end = Date.parse(new Date());
+  changeDate(now)
+
+  $('#date').on 'change', ->
+    date = $('#date').val()
+    console.log date
+    if Date.parse(now) > Date.parse(date)
+      changeDate(date)
+    else
+      console.log "We can't analyze your future."
+
+
+changeDate = (date)->
+  start = Date.parse(date) - 86400000;
+  end = Date.parse(date);
   jsonData = ""
 
   chrome.history.search("text":"", "startTime":start, "endTime":end, "maxResults":1000,
-    (array)=>
-      hashmap = new Hashmap(array)
-      searchWordList(hashmap.hash)
-      jsonData = new CreateData(hashmap.sortedByTimes())
-      getJsonData.request(jsonData.urlList);
+  (array)=>
+    hashmap = new Hashmap(array)
+    searchWordList(hashmap.hash)
+    jsonData = new CreateData(hashmap.sortedByTimes())
+    getJsonData.request(jsonData.urlList);
   )
+
 
 
 class Hashmap
@@ -63,6 +76,7 @@ class CreateData
 
     return urls
 
+  # 記事の数を決定する
   calcElementNum = ()->
     width = $(window).width()
     height = $(window).height()
@@ -74,6 +88,7 @@ class CreateData
     else
       return 12
 
+  # 引数のページをピックアップするか決める
   canSelectPage = (h)->
     if !@domainHash then @domainHash = []
     if h.url.indexOf("https") > -1
@@ -85,24 +100,25 @@ class CreateData
     if h.title.length < 2
       return false
 
+    #
     pageType = h.url.split("/").pop()
     target = ["png", "jpg", "mp3"]
     for t in target
       if pageType.indexOf(t) != -1
         return false
 
+    #  同じドメインからはひとつ
     domainType = h.url.split("/")[2]
     if !@domainHash[domainType]
       @domainHash[domainType] = true
     else
       return false
 
-    if domainType == "www.youtube.com"
-      return false
-    if domainType == "127.0.0.1:5000"
-      return false
-    if domainType == "localhost:8080"
-      return false
+    # 除外ドメイン
+    exceptions = ["www.youtube.com", "127.0.0.1:5000", "localhost:8080"]
+    for e in exceptions
+      if domainType == e
+        return false
     return true
 
 

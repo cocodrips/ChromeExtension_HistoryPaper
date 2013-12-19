@@ -93,10 +93,10 @@ var draw_treemap = function(dataset){
 //    article.append("h5")
 //        .html(function(d) { return "<a href="+d.url+" target='_blank'>"+d.url+"</a>"});
     article.append("div")
-        .attr("class","news-img")
+        .attr("class", "news-img")
         .html(function(d) {return "<img src= " +d.image + ">"});
     article.append("div")
-        .attr("class","news-text")
+        .attr("class", "news-text")
         .html(function(d) {return d.summary});
 
 

@@ -7,6 +7,20 @@ body{
   background-color: white;
   font-family: 'Open Sans', 'Century Gothic',Arial, Helvetica, sans-serif;
 
+  .question{
+    font-size: 12px;
+    font-weight: bold;
+  }
+  label{
+    font-size: 13px;
+  }
+
+  #enquete{
+    background-color: #d2a2a6;
+    border-radius: 5px;
+    padding: 5px;
+  }
+
   #container{
     width: 100%;
     height: 100%;
@@ -55,11 +69,13 @@ body{
     }
     img{
       max-height:50%;
+      max-width: 100%;
       border-radius:5px;
     }
     .news-img{
-      max-height:40%;
-      margin:5px;
+      max-height: 40%;
+      max-width: 100%;
+      margin: 5px;
       float: left;
       display: inline-block;
     }
@@ -100,7 +116,6 @@ body{
     display: none;
 
   }
-
 
 
   .close_btn{
