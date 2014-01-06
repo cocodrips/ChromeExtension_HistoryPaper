@@ -3,7 +3,6 @@ var getJsonData = {
   request: function(urls) {
     var req = new XMLHttpRequest();
     console.log(urls);
-//    url = "http://www25463ue.sakura.ne.jp/chica/web.wsgi/hs/pageinfo/"+ encodeURI(urls);
     url = "http://cocodrips.com/hs/pageinfo/"+  escape(urls);
     console.log(url);
     req.open("GET", url, true);

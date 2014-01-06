@@ -42,6 +42,7 @@
         keywordsHtml += "<span style='font-size:" + (8 + Math.min(sorted[s].times, 20)) + "px;'><pre>" + sorted[s].keyword + "</pre></span>";
       }
     }
+    $('#key-cloud').text("");
     return $('#key-cloud').append(keywordsHtml);
   };
 

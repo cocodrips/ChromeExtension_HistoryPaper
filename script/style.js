@@ -5,10 +5,12 @@
   this.sidebarWidth = 300;
 
   $(function() {
-    var mainHeight;
+    var mainHeight, newstext;
     mainHeight = $(window).height() - headerHeight;
     $("#main-container").css("height", mainHeight);
-    return $("#sidebar").css("height", mainHeight);
+    $("#sidebar").css("height", mainHeight);
+    newstext = $(".news-text").html();
+    return console.log(newstext);
   });
 
 }).call(this);

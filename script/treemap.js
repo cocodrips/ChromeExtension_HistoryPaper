@@ -3,6 +3,9 @@ var draw_treemap = function(dataset){
     var bgcolor = "#F5F5F5";
     var bordercolor = "#fff";
 
+//    reset
+    $("#main-container").text("");
+
     var w = $(window).width()- sidebarWidth,
         h = $(window).height() - headerHeight,
         x = d3.scale.linear().range([0, w]),
@@ -18,6 +21,7 @@ var draw_treemap = function(dataset){
         .mode("squarify")
         .value(function(d) { return d.size; });
 
+//  #treemap使ってない
     var svg = d3.select("#treemap").append("div")
         .attr("class", "chart")
         .style("width", w*extend + "px")

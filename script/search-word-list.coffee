@@ -29,4 +29,5 @@ drawWordList = (sorted)->
   for s of sorted
     if count++ < 50
       keywordsHtml += "<span style='font-size:" + (8 + Math.min(sorted[s].times, 20)) + "px;'><pre>" + sorted[s].keyword + "</pre></span>"
-  $('#key-cloud').append(keywordsHtml);
+  $('#key-cloud').text("")
+  $('#key-cloud').append(keywordsHtml)
